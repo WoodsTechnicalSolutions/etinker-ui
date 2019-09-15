@@ -1,0 +1,26 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cpp}
+decl {\#include <cstdio>} {selected private local
+}
+
+class etinker_ui {open
+} {
+  Function {etinker_ui()} {open
+  } {
+    Fl_Window _window {open
+      xywh {1261 527 115 60} type Double visible
+    } {
+      Fl_Button _button_exit {
+        label Exit
+        callback {fprintf(stdout, "Exiting.\\n");
+_window->hide();}
+        xywh {10 15 95 35}
+      }
+    }
+    code {// Show Window
+fprintf(stdout, "Showing.\\n");
+_window->show();} {}
+  }
+}

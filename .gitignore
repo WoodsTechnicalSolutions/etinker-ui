@@ -1,0 +1,12 @@
+/fltk
+/etinker-ui
+/etinker-ui.h
+/etinker-ui.cpp
+/*.patch
+*.log
+*.o
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
