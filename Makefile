@@ -16,15 +16,15 @@ CXX = g++
 
 TARGET_EXE = etinker-ui
 
-SOURCES = $(shell ls *.cpp 2>/dev/null)
-SOURCES_EXTRA = Makefile
-SOURCES_EXTRA += $(shell ls *.h 2>/dev/null)
-OBJECTS = $(patsubst %.cpp,%.o,$(SOURCES))
-
 FLUID_SOURCES = $(shell ls *.fl 2>/dev/null)
 FLUID_OBJECTS = $(patsubst %.fl,%.o,$(FLUID_SOURCES))
 FLUID_CPP = $(patsubst %.fl,%.cpp,$(FLUID_SOURCES))
 FLUID_CPP += $(patsubst %.fl,%.h,$(FLUID_SOURCES))
+
+SOURCES = $(shell ls *.cpp 2>/dev/null)
+SOURCES_EXTRA = Makefile
+SOURCES_EXTRA += $(shell ls *.h 2>/dev/null)
+OBJECTS = $(FLUID_OBJECTS) $(patsubst %.cpp,%.o,$(SOURCES))
 
 DEBUG = yes
 CXXFLAGS = -g
@@ -62,7 +62,7 @@ fltk: /usr/bin/fluid
 			mkdir -p build && cd build &&\
 			cmake .. \
 				-DCMAKE_INSTALL_PREFIX=/usr \
-				-DCMAKE_INSTALL_LIBDIR=lib \
+				-DCMAKE_INSTALL_LIBDIR=lib/$(shell dpkg-architecture -qDEB_HOST_MULTIARCH 2>/dev/null) \
 				-DOPTION_BUILD_TYPE=Release \
 				-DOPTION_BUILD_SHARED_LIBS=on \
 				-DOPTION_BUILD_EXAMPLES=0 \
@@ -83,7 +83,7 @@ fltk: /usr/bin/fluid
 		exit 2; \
 	fi
 
-$(TARGET_EXE): fltk $(FLUID_OBJECTS) $(OBJECTS) $(SOURCES_EXTRA)
+$(TARGET_EXE): fltk $(FLUID_CPP) $(OBJECTS) $(SOURCES_EXTRA)
 	$(CXX) $(LDFLAGS) $(OBJECTS) -o $@ $(LDLIBS)
 
 %.o: %.cpp
@@ -94,7 +94,7 @@ $(TARGET_EXE): fltk $(FLUID_OBJECTS) $(OBJECTS) $(SOURCES_EXTRA)
 
 .PHONY: clean
 clean:
-	$(RM) $(OBJECTS) $(FLUID_OBJECTS) $(FLUID_CPP)
+	$(RM) $(OBJECTS)
 	$(RM) $(TARGET_EXE)
 
 .PHONY: env
