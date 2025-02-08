@@ -4,21 +4,30 @@
  */
 
 #include <cstdio>
-
-#include <FL/Fl.H>
+#include <cstdbool>
 
 #include "etinker-ui.h"
 
 int main(int argc, char **argv, char **envp)
 {
 	int rc;
-	etinker_ui window;
+	bool debug = false;
+	etinker_ui *ui;
 
-	fprintf(stdout, "etinker-ui: starting\n");
+	if ((argc > 0) && argv[1]) {
+		if (!strncmp(argv[1], "debug", 5))
+			debug = true;
+	}
+
+	if (debug)
+		fprintf(stdout, "etinker-ui: starting\n");
+
+	ui = new etinker_ui(debug);
 
 	rc = Fl::run();
 
-	fprintf(stdout, "etinker-ui: ending (%d)\n", rc);
+	if (debug)
+		fprintf(stdout, "etinker-ui: exiting (%d)\n", rc);
 
 	return rc;
 }

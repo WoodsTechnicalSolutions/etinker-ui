@@ -1,26 +1,42 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0400
+version 1.0401
 header_name {.h}
 code_name {.cpp}
-decl {\#include <cstdio>} {selected private local
-}
-
 class etinker_ui {open
 } {
-  Function {etinker_ui()} {open
+  decl {bool _debug;} {private local
+  }
+  Function {etinker_ui(bool debug)} {open
   } {
-    Fl_Window _window {open
-      xywh {1261 527 115 60} type Double visible
+    code {_debug = debug;} {}
+    Fl_Window _window {
+      label {etinker UI} open
+      private xywh {1725 458 115 60} type Double
+      code0 {if (_debug) fprintf(stdout, "FLTK Window Showing\\n");}
+      code1 {o->show();} visible
     } {
-      Fl_Button _button_exit {
-        label Exit
-        callback {fprintf(stdout, "Exiting.\\n");
-_window->hide();}
-        xywh {10 15 95 35}
+      Fl_Group {} {open
+        private xywh {0 -1 115 60}
+      } {
+        Fl_Button {} {
+          label Exit
+          callback {if (_debug) fprintf(stdout, "FLTK Window Exiting\\n");
+_window->hide();} selected
+          xywh {10 15 95 35}
+        }
       }
     }
-    code {// Show Window
-fprintf(stdout, "Showing.\\n");
-_window->show();} {}
+  }
+  Function {window()} {open return_type {const Fl_Double_Window *}
+  } {
+    code {return _window;} {}
+  }
+  Function {debug(bool state)} {open return_type void
+  } {
+    code {_debug = state;} {}
+  }
+  Function {debug()} {open return_type bool
+  } {
+    code {return _debug;} {}
   }
 }
