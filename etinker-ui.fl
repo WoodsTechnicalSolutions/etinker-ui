@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0401
+version 1.0402
 header_name {.h}
 code_name {.cpp}
 class etinker_ui {open
@@ -11,7 +11,7 @@ class etinker_ui {open
     code {_debug = debug;} {}
     Fl_Window _window {
       label {etinker UI} open
-      private xywh {1725 458 115 60} type Double
+      private xywh {600 440 115 60} type Double
       code0 {if (_debug) fprintf(stdout, "FLTK Window Showing\\n");}
       code1 {o->show();} visible
     } {

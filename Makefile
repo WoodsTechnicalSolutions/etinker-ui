@@ -16,6 +16,8 @@ CXX = g++
 
 TARGET_EXE = etinker-ui
 
+FLTK_VERSION := 1.4.2
+
 FLUID_SOURCES = $(shell ls *.fl 2>/dev/null)
 FLUID_OBJECTS = $(patsubst %.fl,%.o,$(FLUID_SOURCES))
 FLUID_CPP = $(patsubst %.fl,%.cpp,$(FLUID_SOURCES))
@@ -55,30 +57,33 @@ $(TARGET_EXE): $(FLUID_CPP) $(OBJECTS) $(SOURCES_EXTRA)
 %.cpp %.h: %.fl | /usr/bin/fluid
 	@fluid -c $<
 
-.PHONY: fltk
-fltk: /usr/bin/fluid
+.PHONY: fluid
+fluid: /usr/bin/fluid
+	@fluid $(TARGET_EXE).fl
 
 /usr/bin/fluid: fltk-git-check
 	@if ! [ -n "`which cmake 2>/dev/null`" ]; then \
 		printf "***** 'cmake' IS MISSING *****\n"; \
 		exit 2; \
 	fi
-	(cd fltk && \
-		mkdir -p build && cd build &&\
-		cmake .. \
-			-DCMAKE_INSTALL_PREFIX=/usr \
-			-DCMAKE_INSTALL_LIBDIR=lib/$(shell dpkg-architecture -qDEB_HOST_MULTIARCH 2>/dev/null) \
-			-DCMAKE_BUILD_TYPE=Release \
-			-DFLTK_BUILD_SHARED_LIBS=on \
-			-DFLTK_GRAPHICS_CAIRO=on -DFLTK_OPTION_CAIRO_EXT=on -DFLTK_OPTION_CAIRO_WINDOW=on -DFLTK_USE_PANGO=on \
-			-DFLTK_BUILD_HTML_DOCS=on -DFLTK_BUILD_FLUID_DOCS=on -DFLTK_BUILD_PDF_DOCS=on \
-			-DFLTK_OPTION_OPTIM=-fPIC && \
-		make && \
-		make docs && \
-		sudo make install)
 	@if ! [ -f /usr/bin/fluid ]; then \
-		printf "***** FLTK BUILD FAILED *****\n"; \
-		exit 2; \
+		(cd fltk && \
+			mkdir -p build && cd build &&\
+			cmake .. \
+				-DCMAKE_INSTALL_PREFIX=/usr \
+				-DCMAKE_INSTALL_LIBDIR=lib/$(shell dpkg-architecture -qDEB_HOST_MULTIARCH 2>/dev/null) \
+				-DCMAKE_BUILD_TYPE=Release \
+				-DFLTK_BUILD_SHARED_LIBS=on \
+				-DFLTK_GRAPHICS_CAIRO=on -DFLTK_OPTION_CAIRO_EXT=on -DFLTK_OPTION_CAIRO_WINDOW=on -DFLTK_USE_PANGO=on \
+				-DFLTK_BUILD_HTML_DOCS=on -DFLTK_BUILD_FLUID_DOCS=on -DFLTK_BUILD_PDF_DOCS=on \
+				-DFLTK_OPTION_OPTIM=-fPIC && \
+			make && \
+			make docs && \
+			sudo make install && \
+			if ! [ -f /usr/bin/fluid ]; then \
+				printf "***** FLTK BUILD FAILED *****\n"; \
+				exit 2; \
+			fi); \
 	fi
 
 fltk-%:
@@ -97,6 +102,7 @@ fltk-git-%:
 			printf "***** FLTK GIT CLONE FAILED *****\n"; \
 			exit 2; \
 		fi; \
+		(cd fltk && git checkout release-$(FLTK_VERSION)); \
 	else \
 		if ! [ "check" = "$(*F)" ]; then \
 			(cd fltk && git $(*F)); \
